@@ -1,4 +1,4 @@
-module haconfig
+module github.com/l00pss/helpme/haconfig
 
 go 1.25
 
