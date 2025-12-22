@@ -7,4 +7,5 @@ use (
 	o4g_logger
 	wrapper
 	haconfig
+	goerr
 )

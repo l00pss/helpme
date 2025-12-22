@@ -75,7 +75,37 @@ Rust-inspired Result type for explicit error handling without exceptions.
 - Safe value and error extraction
 - Chainable operations
 
-### 🔍 Wrapper - Query Operations
+### � GoErr - Enhanced Error Handling
+A sophisticated error handling library that extends Go's standard error interface with runtime classification and wrapping capabilities.
+
+**Features:**
+- Distinguish between runtime and non-runtime errors
+- Error wrapping with context preservation
+- Type checking for error classification
+- Unwrapping support for error chains
+- Clean API for error management
+
+**Usage:**
+```go
+// Wrap errors with runtime classification
+runtimeErr := goerr.WrapRuntimeErr(err)
+nonRuntimeErr := goerr.WrapNonRuntimeErr(err)
+
+// Check error types
+if runtimeErr.IsRuntime() {
+    // Handle runtime errors
+}
+
+// Unwrap original errors
+originalErr := runtimeErr.Unwrap()
+
+// Type checking
+if goerr.IsGoErr(err) {
+    // Handle as GoErr
+}
+```
+
+### �🔍 Wrapper - Query Operations
 A query builder and wrapper system for database operations with support for projections, pagination, sorting, and filtering.
 
 **Features:**
@@ -95,6 +125,18 @@ go get github.com/l00pss/helpme/haconfig
 
 # Install the logger module
 go get github.com/l00pss/helpme/o4g_logger
+
+# Install the error handling module
+go get github.com/l00pss/helpme/goerr
+
+# Install the optional values module
+go get github.com/l00pss/helpme/option
+
+# Install the result module
+go get github.com/l00pss/helpme/result
+
+# Install the wrapper module
+go get github.com/l00pss/helpme/wrapper
 
 # Install all modules (if using go.work)
 go get github.com/l00pss/helpme
@@ -116,6 +158,7 @@ go test ./...
 # Test specific module
 cd haconfig && go test
 cd o4g_logger && go test
+cd goerr && go test
 cd option && go test
 cd result && go test
 cd wrapper && go test
@@ -130,6 +173,7 @@ go test -cover ./...
 helpme/
 ├── haconfig/          # Configuration management
 ├── o4g_logger/        # Structured logging
+├── goerr/             # Enhanced error handling
 ├── option/            # Optional value types
 ├── result/            # Result/Error types
 ├── wrapper/           # Query operations
@@ -186,6 +230,33 @@ func findUser(id int) option.Option[User] {
 user := findUser(123)
 if user.IsSome() {
     fmt.Printf("Found user: %s", user.Unwrap().Name)
+}
+```
+
+### Enhanced Error Handling
+```go
+func processData(data []byte) error {
+    if len(data) == 0 {
+        return goerr.WrapNonRuntimeErr(errors.New("empty data"))
+    }
+    
+    if err := validateData(data); err != nil {
+        return goerr.WrapRuntimeErr(err)
+    }
+    
+    return nil
+}
+
+err := processData(nil)
+if goerr.IsGoErr(err) {
+    goErr := err.(*goerr.GoErr)
+    if goErr.IsRuntime() {
+        // Handle runtime errors differently
+        log.Error("Runtime error:", goErr.Error())
+    } else {
+        // Handle validation errors
+        log.Warn("Validation error:", goErr.Error())
+    }
 }
 ```
 
